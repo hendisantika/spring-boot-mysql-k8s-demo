@@ -4,11 +4,13 @@ import id.my.hendisantika.mysqlk8sdemo.model.User;
 import id.my.hendisantika.mysqlk8sdemo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,5 +38,10 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @GetMapping("/findUser/{id}")
+    public Optional<User> getUser(@PathVariable Long id) {
+        return userRepository.findById(id);
     }
 }

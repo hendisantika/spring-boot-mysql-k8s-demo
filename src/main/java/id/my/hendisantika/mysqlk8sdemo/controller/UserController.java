@@ -44,4 +44,10 @@ public class UserController {
     public Optional<User> getUser(@PathVariable Long id) {
         return userRepository.findById(id);
     }
+
+    @GetMapping("/deleteUser/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userRepository.deleteById(id);
+        return "Deleted User Successfully::" + id;
+    }
 }

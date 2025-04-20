@@ -1,0 +1,62 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: spring-boot-mysql-k8s-demo
+  labels:
+    app: spring-boot-mysql-k8s-demo
+    tier: app
+spec:
+  ports:
+    - nodePort: 30163
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: spring-boot-mysql-k8s-demo
+    tier: app
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-mysql-k8s-demo
+spec:
+  selector:
+    matchLabels:
+      app: spring-boot-mysql-k8s-demo
+      tier: app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: spring-boot-mysql-k8s-demo
+        tier: app
+    spec:
+      containers:
+        - name: spring-boot-mysql-k8s-demo
+          image: spring-boot-mysql-k8s-demo:1.0
+          ports:
+            - containerPort: 8080
+          env: # Setting Enviornmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf
+                  key: name
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials # Secret Name
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+        

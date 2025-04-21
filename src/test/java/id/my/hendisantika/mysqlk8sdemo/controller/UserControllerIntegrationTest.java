@@ -99,4 +99,27 @@ class UserControllerIntegrationTest extends AbstractContainerBaseTest {
                 .andExpect(jsonPath("$.name", is("Itadori Yuji")))
                 .andExpect(jsonPath("$.country", is("JPN")));
     }
+
+
+    @Test
+    void shouldDeleteUserById() throws Exception {
+        // Given
+        User user = new User();
+        user.setName("Itadori Yuji");
+        user.setCountry("JPN");
+        User savedUser = userRepository.save(user);
+
+        // When
+        ResultActions response = mockMvc.perform(get("/deleteUser/{id}", savedUser.getId()));
+
+        // Then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is("Deleted User Successfully::" + savedUser.getId())));
+
+        // Verify user is deleted
+        mockMvc.perform(get("/findUser/{id}", savedUser.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
 }

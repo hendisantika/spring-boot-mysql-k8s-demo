@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,5 +57,46 @@ class UserControllerIntegrationTest extends AbstractContainerBaseTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isString())
                 .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
+    void shouldGetAllUsers() throws Exception {
+        // Given
+        User user1 = new User();
+        user1.setName("Itadori Yuji");
+        user1.setCountry("JPN");
+
+        User user2 = new User();
+        user2.setName("Satoru Gojo");
+        user2.setCountry("JPN");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        // When
+        ResultActions response = mockMvc.perform(get("/users"));
+
+        // Then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)));
+    }
+
+    @Test
+    void shouldGetUserById() throws Exception {
+        // Given
+        User user = new User();
+        user.setName("Itadori Yuji");
+        user.setCountry("JPN");
+        User savedUser = userRepository.save(user);
+
+        // When
+        ResultActions response = mockMvc.perform(get("/findUser/{id}", savedUser.getId()));
+
+        // Then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Itadori Yuji")))
+                .andExpect(jsonPath("$.country", is("JPN")));
     }
 }

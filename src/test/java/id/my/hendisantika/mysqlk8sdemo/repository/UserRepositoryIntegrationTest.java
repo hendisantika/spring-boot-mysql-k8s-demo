@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -34,4 +36,27 @@ class UserRepositoryIntegrationTest extends AbstractContainerBaseTest {
         assertThat(savedUser.getName()).isEqualTo("Itadori Yuji");
         assertThat(savedUser.getCountry()).isEqualTo("JPN");
     }
+
+    @Test
+    void shouldFindAllUsers() {
+        // Given
+        User user1 = new User();
+        user1.setName("Itadori Yuji");
+        user1.setCountry("JPN");
+
+        User user2 = new User();
+        user2.setName("Satoru Gojo");
+        user2.setCountry("JPN");
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        // When
+        List<User> users = userRepository.findAll();
+
+        // Then
+        assertThat(users).isNotNull();
+        assertThat(users.size()).isEqualTo(2);
+    }
+
 }

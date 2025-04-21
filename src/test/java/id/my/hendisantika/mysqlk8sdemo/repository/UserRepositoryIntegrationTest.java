@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -57,6 +58,23 @@ class UserRepositoryIntegrationTest extends AbstractContainerBaseTest {
         // Then
         assertThat(users).isNotNull();
         assertThat(users.size()).isEqualTo(2);
+    }
+
+    @Test
+    void shouldFindUserById() {
+        // Given
+        User user = new User();
+        user.setName("Itadori Yuji");
+        user.setCountry("JPN");
+        User savedUser = userRepository.save(user);
+
+        // When
+        Optional<User> foundUser = userRepository.findById(savedUser.getId());
+
+        // Then
+        assertThat(foundUser).isPresent();
+        assertThat(foundUser.get().getName()).isEqualTo("Itadori Yuji");
+        assertThat(foundUser.get().getCountry()).isEqualTo("JPN");
     }
 
 }

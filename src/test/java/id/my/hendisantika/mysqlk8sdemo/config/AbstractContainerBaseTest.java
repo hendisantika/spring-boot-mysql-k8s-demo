@@ -7,7 +7,7 @@ import org.testcontainers.junit.jupiter.Container;
 
 public abstract class AbstractContainerBaseTest {
 
-    private static final String MYSQL_IMAGE = "mysql:9.3.0";
+    private static final String MYSQL_IMAGE = "mysql:8.0";
     private static final String DATABASE_NAME = "test";
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "testuser@123";

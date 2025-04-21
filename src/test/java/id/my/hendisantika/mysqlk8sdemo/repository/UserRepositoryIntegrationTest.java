@@ -77,4 +77,19 @@ class UserRepositoryIntegrationTest extends AbstractContainerBaseTest {
         assertThat(foundUser.get().getCountry()).isEqualTo("JPN");
     }
 
+    @Test
+    void shouldDeleteUserById() {
+        // Given
+        User user = new User();
+        user.setName("Itadori Yuji");
+        user.setCountry("JPN");
+        User savedUser = userRepository.save(user);
+
+        // When
+        userRepository.deleteById(savedUser.getId());
+        Optional<User> foundUser = userRepository.findById(savedUser.getId());
+
+        // Then
+        assertThat(foundUser).isEmpty();
+    }
 }

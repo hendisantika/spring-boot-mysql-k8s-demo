@@ -14,7 +14,7 @@
     <name>spring-boot-mysql-k8s-demo</name>
     <description>spring-boot-mysql-k8s-demo</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <testcontainers.version>2.0.5</testcontainers.version>
     </properties>
     <dependencies>

@@ -2,7 +2,7 @@ package id.my.hendisantika.mysqlk8sdemo.config;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 public abstract class AbstractContainerBaseTest {
@@ -13,7 +13,7 @@ public abstract class AbstractContainerBaseTest {
     private static final String PASSWORD = "testuser@123";
 
     @Container
-    protected static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>(MYSQL_IMAGE)
+    protected static final MySQLContainer mySQLContainer = new MySQLContainer(MYSQL_IMAGE)
             .withDatabaseName(DATABASE_NAME)
             .withUsername(USERNAME)
             .withPassword(PASSWORD)

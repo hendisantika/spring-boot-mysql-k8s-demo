@@ -4,8 +4,8 @@ import id.my.hendisantika.mysqlk8sdemo.config.AbstractContainerBaseTest;
 import id.my.hendisantika.mysqlk8sdemo.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;

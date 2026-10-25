@@ -2,20 +2,47 @@
 
 ## [spring-boot-mysql-k8s-demo](#spring-boot-mysql-k8s-demo)
 
+[![Java CI with Maven](https://github.com/hendisantika/spring-boot-mysql-k8s-demo/actions/workflows/maven.yml/badge.svg)](https://github.com/hendisantika/spring-boot-mysql-k8s-demo/actions/workflows/maven.yml)
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?logo=springboot)
+![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot)
+
 Run spring boot application and mysql on kubernetes cluster
+
+## [Tech Stack](#tech-stack)
+
+| Component        | Version                     |
+|:-----------------|:----------------------------|
+| Java (JDK)       | 25 (Temurin / Corretto)     |
+| Spring Boot      | 4.1.1                       |
+| Spring Data JPA  | Hibernate 7                 |
+| MySQL            | 8.0 (tests) / 5.7 (k8s)     |
+| Testcontainers   | 2.0.5                       |
+| Build tool       | Maven Wrapper (`./mvnw`)    |
+| Container image  | `amazoncorretto:25-alpine`  |
 
 ## [Prerequisite / Libraries used](#Prerequisite)
 
+* JDK 25
 * Docker and kubernetes cluster
 * kubectl
 * Spring Boot
 * Spring Configuration
 * Spring REST Controller
+* Spring Data JPA
 * MySQL
+* Lombok
+* Testcontainers (integration tests)
 
 ## [Compilation command](#compilation-command)
 
-```mvn clean package -DskipTests```
+```./mvnw clean package -DskipTests```
+
+## [Running tests](#running-tests)
+
+Integration tests spin up a real MySQL 8.0 database with Testcontainers, so Docker must be running.
+
+```./mvnw clean verify```
 
 ## [Build Docker image](#build-docker-image)
 
@@ -29,15 +56,15 @@ Run spring boot application and mysql on kubernetes cluster
 
 These files will be available under deploy folder and need to be executed sequentially.
 
-```kubectl apply -f mysql-credentials.yml```
+```kubectl apply -f deploy/mysql-credentials.yml```
 
-```kubectl apply -f mysql-root-credentials.yml```
+```kubectl apply -f deploy/mysql-root-credentials.yml```
 
-```kubectl apply -f mysql-configmap.yml```
+```kubectl apply -f deploy/mysql-configmap.yml```
 
-```kubectl apply -f mysql-deployment.yml```
+```kubectl apply -f deploy/mysql-deployment.yml```
 
-```kubectl apply -f spring-boot-deployment.yml```
+```kubectl apply -f deploy/spring-boot-deployment.yml```
 
 ## [Verify deployment objects](#verify-deployment-objects)
 
@@ -55,9 +82,9 @@ These files will be available under deploy folder and need to be executed sequen
 
 > Navigate inside mysql container:
 
-```kubectl exec -it <podName> bash```
+```kubectl exec -it <podName> -- bash```
 
-```Eg: kubectl exec -it mysql-795b8d8fbb-6mjxl bash```
+```Eg: kubectl exec -it mysql-795b8d8fbb-6mjxl -- bash```
 
 > Provide credentials:
 
@@ -88,15 +115,15 @@ These files will be available under deploy folder and need to be executed sequen
 
 These files will be available under deploy folder and need to be executed sequentially.
 
-```kubectl delete -f mysql-credentials.yml```
+```kubectl delete -f deploy/mysql-credentials.yml```
 
-```kubectl delete -f mysql-root-credentials.yml```
+```kubectl delete -f deploy/mysql-root-credentials.yml```
 
-```kubectl delete -f mysql-configmap.yml```
+```kubectl delete -f deploy/mysql-configmap.yml```
 
-```kubectl delete -f mysql-deployment.yml```
+```kubectl delete -f deploy/mysql-deployment.yml```
 
-```kubectl delete -f spring-boot-deployment.yml```
+```kubectl delete -f deploy/spring-boot-deployment.yml```
 
 ## [Removing Docker Image](#removing-docker-image)
 
@@ -109,3 +136,25 @@ These files will be available under deploy folder and need to be executed sequen
 ```docker image rm <imageName>:<tag>```
 
 `Eg: docker image rm spring-boot-mysql-k8s-demo:1.0`
+
+## [Continuous Integration](#continuous-integration)
+
+The [Java CI with Maven](.github/workflows/maven.yml) workflow runs on every push and pull request to `main` (and can be
+triggered manually):
+
+* Sets up Temurin JDK 25 with Maven dependency caching
+* Runs `./mvnw -B verify` (compile + Testcontainers integration tests)
+* On pushes to `main`, submits the Maven dependency graph to GitHub to improve Dependabot alerts
+* Uses least-privilege permissions and cancels superseded runs for the same branch
+
+## [Dependency updates](#dependency-updates)
+
+[Dependabot](.github/dependabot.yml) keeps the project up to date:
+
+| Ecosystem      | Scope                                         | Schedule              | Grouping                                                  |
+|:---------------|:----------------------------------------------|:----------------------|:----------------------------------------------------------|
+| Maven          | `pom.xml`                                     | Daily 05:00 (WIB)     | Spring Boot, Testcontainers, other minor/patch updates    |
+| GitHub Actions | `.github/workflows`                           | Daily 05:00 (WIB)     | All actions in one PR                                     |
+| Docker         | `Dockerfile` and Kubernetes manifests `deploy/` | Weekly, Monday 05:00 | Stays on the JDK 25 LTS line for `amazoncorretto`        |
+
+Dependabot PRs use Conventional Commit prefixes (`build(deps)`, `ci(deps)`, `build(docker)`).
